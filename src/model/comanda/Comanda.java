@@ -19,101 +19,95 @@ public class Comanda implements Serializable{
         this.status="Pendente";
     }
 
- 
-    
-    public String relatorio() {
-        double total = 0.0;
-        double desconto = 0.0;
-        double valorpi = 0.0, valorpt = 0.0, dsc = 0.0;
-        int pi = 0, pt = 0;
-        StringBuilder a = new StringBuilder();
-        StringBuilder b = new StringBuilder();
-        StringBuilder relatorio = new StringBuilder();
 
-        for (Consumo consumo : consumos) {
-            double valorItem = consumo.getValor();
-            String tipoItem = consumo.getItem().getTipo();
-            total+=valorItem;
-            if (tipoItem.equalsIgnoreCase("Produto Industrializado")) {
-            	pi+=consumo.getQuant();
-            	valorpi+=valorItem;
-            	a.append(consumo+"\n");
-            }else if((tipoItem.equalsIgnoreCase("Comida Tradicional"))) {
-            	pt+=consumo.getQuant();
-            	valorpt+=valorItem;
-            	b.append(consumo+"\n");
-            }
-        }
-        relatorio.append(a.toString()+b.toString());
-        
-        if(pi>0) {
-	        relatorio.append("\nAlimentos Industrializado\n");
-	        relatorio.append("===========================\n");
-	        relatorio.append("Total: R$"+valorpi);
-	        if (pi <= 15 && pi > 5) { valorpi*=0.1;dsc=10;
-	        } else if (pi <= 25 && pi > 15) {valorpi*=0.15;dsc=15;
-	        } else if (pi > 25) {valorpi*=0.2;dsc=20;
-	        } else {valorpi*=0.0;dsc=0;}
-	        relatorio.append(", Desconto: "+dsc+"%, Total com Desconto: R$"+((valorpi/(dsc/100))-valorpi)+"\n");
-        }
-        if(pt>0) {
-	        relatorio.append("\nAlimentos Tradicionais\n");
-	        relatorio.append("===========================\n");
-	        relatorio.append("Total: R$"+valorpt);    
-	        if (pt <= 5 && pt > 2) { valorpt*=0.15;dsc=15;
-	        } else if (pt <= 10 && pt > 5) {valorpt*=0.20;dsc=20;
-	        } else if (pt > 10) {valorpt*=0.25;dsc=25;
-	        } else {valorpt*=0.0;dsc=0;}
-	        relatorio.append(", Desconto: "+dsc+"%, Total com Desconto: R$"+((valorpt/(dsc/100))-valorpt)+"\n");
-        }
-        
-        desconto = valorpi+valorpt;   
-        double totalComDesconto = total - desconto;
-        relatorio.append("\nTotal a Pagar\n");
-        relatorio.append("===========================");
-        relatorio.append("\nTotal: R$").append(total).append("\nTotal com Desconto: R$").append(totalComDesconto).append("\n");
+	public String relatorio(){
+		StringBuilder relatorio = new StringBuilder();
 
-        return relatorio.toString();
-    }
+		double [] resultadoPI = calcularDescontoETotalPorTipo(consumos, "Produto Industrializado");
+		double totalPI = resultadoPI[0];
+		double descontoPI = resultadoPI[1];
+		double totalComDescontoPI = resultadoPI[2];
 
+		double [] resultadoCT = calcularDescontoETotalPorTipo(consumos, "Comida Tradicional");
+		double totalCT = resultadoCT[0];
+		double descontoCT = resultadoCT[1];
+		double totalComDescontoCT = resultadoCT[2];
+		relatorio.append("Alimentos Industrializados\n");
+    	relatorio.append("===========================\n");
+    	relatorio.append("Total: R$").append(totalPI);
+    	relatorio.append(", Desconto: ").append((descontoPI / totalPI) * 100).append("%");
+    	relatorio.append(", Total com Desconto: R$").append(totalComDescontoPI).append("\n");
 
-    
-    public void pagar() {
-    	double total = 0.0, desconto = 0.0;
-        double valorpi = 0.0, valorpt = 0.0;
-        int pi = 0, pt = 0;
+    	relatorio.append("Alimentos Tradicionais\n");
+    	relatorio.append("===========================\n");
+    	relatorio.append("Total: R$").append(totalCT);
+    	relatorio.append(", Desconto: ").append((descontoCT / totalCT) * 100).append("%");
+    	relatorio.append(", Total com Desconto: R$").append(totalComDescontoCT).append("\n");
 
-        for (Consumo consumo : consumos) {
-            double valorItem = consumo.getValor();
-            String tipoItem = consumo.getItem().getTipo();
-            total+=valorItem;
-            if (tipoItem.equalsIgnoreCase("Produto Industrializado")) {
-            	pi+=consumo.getQuant();
-            	valorpi+=valorItem;
-            }else if((tipoItem.equalsIgnoreCase("Comida Tradicional"))) {
-            	pt+=consumo.getQuant();
-            	valorpt+=valorItem;
-            }
-        }
-        
-        if(pi>0) {
-	        if (pi <= 25 && pi > 5) { valorpi*=0.1;
-	        } else if (pi <= 50 && pi > 25) {valorpi*=0.15;
-	        } else if (pi > 50) {valorpi*=0.2;
-	        } else {valorpi*=0.0;}
-        }
-        if(pt>0) { 
-	        if (pt <= 25 && pt > 5) { valorpt*=0.15;
-	        } else if (pt <= 50 && pt > 25) {valorpt*=0.25;
-	        } else if (pt > 50) {valorpt*=0.35;
-	        } else {valorpt*=0.0;}
-        }
-        desconto = valorpi+valorpt;   
-    	this.total=total-desconto;
-    	this.status="Pago";
-    }
-    
-    
+    	double totalGeral = totalPI + totalCT;
+    	double totalGeralComDesconto = totalComDescontoPI + totalComDescontoCT;
+
+    	relatorio.append("\nTotal a Pagar\n");
+    	relatorio.append("===========================\n");
+    	relatorio.append("Total: R$").append(totalGeral);
+   	 	relatorio.append("\nTotal com Desconto: R$").append(totalGeralComDesconto).append("\n");
+
+    	return relatorio.toString();
+
+	}
+
+	private double[] calcularDescontoETotalPorTipo(List<Consumo> consumos, String tipoItem){
+		double total = 0.0;
+		double desconto = 0.0;
+		int quant = 0;
+
+		for (Consumo consumo : consumos){
+			if (consumo.getItem().getTipo().equalsIgnoreCase(tipoItem)){
+				quant += consumo.getQuant();
+				total += consumo.getValor();
+			}
+		}
+
+		if (quant > 0){
+			if (tipoItem.equalsIgnoreCase("Produto Industrializado")){
+				if (quant <= 15 && quant > 5){
+					desconto = total * 0.1;
+				} else if (quant <= 25 && quant > 15){
+					desconto = total * 0.15;
+				} else if (quant > 25){
+					desconto = total * 0.2;
+				}
+			} else if (tipoItem.equalsIgnoreCase("Comida Tradicional")){
+				if (quant <= 5 && quant > 2){
+					desconto = total * 0.15;
+				} else if (quant <= 10 && quant > 5){
+					desconto = total * 0.20;
+				} else if (quant > 10){
+					desconto = total * 0.25;
+				}
+			}
+		}
+
+		double totalComDesconto = total - desconto;
+		return new double [] {total, desconto, totalComDesconto};
+	}
+
+	public void pagar() {
+		double[] resultadoPI = calcularDescontoETotalPorTipo(consumos, "Produto Industrializado");
+		double totalPI = resultadoPI[0];
+		double descontoPI = resultadoPI[1];
+	
+		double[] resultadoCT = calcularDescontoETotalPorTipo(consumos, "Comida Tradicional");
+		double totalCT = resultadoCT[0];
+		double descontoCT = resultadoCT[1];
+	
+		double totalGeral = totalPI + totalCT;
+		double totalGeralComDesconto = totalGeral - descontoPI - descontoCT;
+	
+		this.total = totalGeralComDesconto;
+		this.status = "Pago";
+	}
+
     public List<Consumo> getAll() {
     	List<Consumo> copia = new ArrayList<>(consumos);
         return copia;
