@@ -121,34 +121,53 @@ public class Comanda implements Serializable{
     	}else {
             consumos.add(consumo);
     	}
-        total += consumo.getValor();
+        atualizaTotal();
     }
 
     public void removerConsumo(Consumo consumo) {
         consumos.remove(consumo);
-        total -= consumo.getValor();
+        atualizaTotal();
     }
     
+	/*O valor do item é multiplicado pelo numero
+	de vezes que foi consumido, o total ficará correto
+	mesmo se a quantidade for atualizada
+	 */
     public void atualizaTotal() {
     	double total=0.0;
     	for (Consumo consumo: consumos) {
-    		total+=consumo.getValor();
+    		total+=consumo.getItem().getValor() * consumo.getQuant();
     	}
     	this.total=total;
     }
     
+	/*Sobre removerDoConsumo
+	 remove o consumo se a quantidade se tornar 0 ou menos
+	 depois de atualizar a quantidade e o valor do consumo,
+	 é verificado se a quantidade se tornou 0 ou menos. 
+	 se sim, esse consumo é marcado para remoção.  
+	 depois o codigo verifica se um consumo foi marcado para remoção e, 
+	 se sim, o é removido da lista de consumos*/
+
     public Consumo removerDoConsumo(int id, int quant) {
-        
-		for (Consumo consumo : consumos) {
-            if (consumo.getId() == id) {
-            	consumo.setQuant(consumo.getQuant()-quant);
-            	double valorItem=consumo.getItem().getValor();
-            	consumo.setValor(valorItem*consumo.getQuant());
-            }
-            
-        }
-		return null;
-		
+		Consumo consumoARemover = null;
+
+		for (Consumo consumo : consumos){
+			if (consumo.getId() == id){
+				consumo.setQuant(consumo.getQuant() - quant);
+				double valorItem = consumo.getItem().getValor();
+				consumo.setValor(valorItem * consumo.getQuant());
+
+				if (consumo.getQuant() <= 0){
+					consumoARemover = consumo;
+				}
+			}
+		}
+		if (consumoARemover != null){
+			consumos.remove(consumoARemover);
+		}
+		atualizaTotal();
+		return consumoARemover;
 	}
     
     public Consumo retornarConsumo(int id) {
@@ -218,5 +237,5 @@ public class Comanda implements Serializable{
 	}
 
 
-    
+
 }

@@ -63,26 +63,36 @@ public class Restaurante {
     public List<ItemCardapio> getAllCardapio(){
     	return recardapio.getAll();
     }
-    
-    public String stringCardapio() {
-   	 String a="";
-   	 for (ItemCardapio cardapio : recardapio.getAll()) {
-             a+=cardapio+"\n";
-             
-     }
-     return a;
-   }
-    
-    public String apresentarCardapio() {
-      	 String a="";
-      	 for (ItemCardapio cardapio : recardapio.getAll()) {
-                a+=cardapio.Show()+"\n";
-                
+
+
+    /*Foi criado um método genérico(imprimirCardapio) para 
+     *imprimir itens do cardapio, esse método aceita um valor
+     * booleano que indicará se deve imprimir os detalhes do
+     * cardápio ou apenas uma visão geral, sendo assim, 
+     * stringCardapio e apresentar cardapio apenas retornan 
+     * true ou false. 
+    */
+    public String imprimirCardapio(boolean detalhado) {
+        StringBuilder a = new StringBuilder();
+        for (ItemCardapio cardapio : recardapio.getAll()) {
+            if (detalhado) {
+                a.append(cardapio.Show()).append("\n");
+            } else {
+                a.append(cardapio).append("\n");
+            }
         }
-        return a;
-      }
-    
-    
+        return a.toString();
+    }
+
+    public String stringCardapio() {
+        return imprimirCardapio(false);
+    }
+
+    public String apresentarCardapio() {
+        return imprimirCardapio(true);
+    }
+
+
     ///COMANDA//////////////////////////////////////////////////////////////////////////////
     
     public Comanda criarComanda(Comanda c) {
@@ -143,13 +153,25 @@ public class Restaurante {
     
   ///CONSUMO//////////////////////////////////////////////////////////////////////////////
 
-    public void adicionarnoConsumo(int numeroComanda, int id) {
+    /*public void adicionarnoConsumo(int numeroComanda, int id) {
         Comanda comanda = buscarComanda(numeroComanda);
         Consumo consumo = new Consumo(recardapio.buscarOpcao(id), id);
         if (comanda != null) {
             comanda.adicionarConsumo(consumo);
         }
+    }*/
+
+    public void adicionarnoConsumo(int numeroComanda, int id) {
+        Comanda comanda = buscarComanda(numeroComanda);
+        ItemCardapio itemCardapio = recardapio.buscarOpcao(id);
+    
+        Validador.validarComanda(comanda, numeroComanda);
+        Validador.validarItemCardapio(itemCardapio, id);
+    
+        Consumo consumo = new Consumo(itemCardapio, id);
+        comanda.adicionarConsumo(consumo);
     }
+    
 
     public void removerDoConsumo(int idComanda, int id, int quant) {
         Comanda comanda = buscarComanda(idComanda);
