@@ -8,12 +8,13 @@ public abstract class ItemCardapio implements Serializable{
 	private double custo;//custo de produção
 	private double valor;//valor de venda
 	
-	public ItemCardapio(String nome, double custo) {
+	public ItemCardapio(String nome, double custo, double valorVenda) {
 		super();
 		this.id = 0;
 		this.nome = nome;
 		this.custo = custo;
-		valor();
+		this.valor = valorVenda;
+		//valor();
 	}
 	
 	public abstract String getTipo();
@@ -62,7 +63,7 @@ public abstract class ItemCardapio implements Serializable{
 		return "id: " + id + ", nome: " + nome + ", valor: R$" + valor + ", lucro: R$" + (valor-custo) + ", "+getTipo()+getAtributo();
 	}
 
-	public abstract void valor();
+	//public abstract void valor();
 	
 
 	

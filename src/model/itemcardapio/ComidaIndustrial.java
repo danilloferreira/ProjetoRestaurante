@@ -4,15 +4,15 @@ import java.io.Serializable;
 
 public class ComidaIndustrial extends ItemCardapio implements Serializable{
 	int quant;
-    public ComidaIndustrial(String nome, double custo, int quant) {
-        super(nome, custo);
+    public ComidaIndustrial(String nome, double custo, double valorVenda, int quant) {
+        super(nome, custo, valorVenda);
         this.quant = quant;
     }
 
-    @Override
+    /*@Override
     public void valor() {
         setValor(getCusto() * 1.4);
-    }
+    }*/
 
 	@Override
 	public String getTipo() {
