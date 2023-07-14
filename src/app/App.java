@@ -71,7 +71,7 @@ public class App {
 			System.out.println("<3> Detalhar");
 			System.out.println("<0> Voltar");
 			System.out.println();
-			System.out.print("Escolha uma opção: ");
+			System.out.print("Escolha uma opcao: ");
 			try {
 				x = Integer.valueOf(s.nextLine());
 			} catch (Exception e) {
@@ -196,12 +196,21 @@ public class App {
 	////////////////////////////////////////////////////////////////////////////////////
 	
 	 public static String detalharCardapio() {
-	   	 String a="";
-	   	 for (ItemCardapio cardapio : r.getAllCardapio()) {
-	             a+=cardapio+"\n";
+	   	 StringBuilder a = new StringBuilder();
+	     StringBuilder b = new StringBuilder();
+	     a.append("-----------------------------------------------\nTradicional\n===================\n");
+	     b.append("-----------------------------------------------\nIndustrializado\n===================\n");
+	     for (ItemCardapio cardapio : r.getAllCardapio()) {
+	         String tipoItem = cardapio.getTipo();
+	         if (tipoItem.equalsIgnoreCase("Produto Industrializado")) {
+	         	b.append(cardapio+"\n-----------------------------------------------\n");
+	         }else if((tipoItem.equalsIgnoreCase("Comida Tradicional"))) {
+	        	a.append(cardapio+"\n-----------------------------------------------\n");
+	         }
 	     }
-	     return a;
-	 }
+	     return a.toString()+b.toString();
+	}
+		
 	 
 	///CADASTRO DE COMANDAS////////////////////////////////////////////////////////////////////////////////
 	public static void comanda(){
@@ -241,13 +250,14 @@ public class App {
 		} catch (RepositoryException ex) {
 			System.err.println(ex.getMessage());
 		} 
+        s = new Scanner(System.in);
 		System.out.println("<ENTER> Voltar"); s.nextLine();
 	}
 	///////////////////////////////////////////////////////////////////////////////////////////
 	public static String listarComandas() {
    	 String a="";
    	 for (Comanda comanda : r.getAllComanda()) {
-             a+=comanda+"\n\n";
+             a+=comanda+"\n-----------------------------------------------\n";
         }
         return a;
     }
@@ -394,12 +404,19 @@ public static void removerComanda(Comanda comanda) {
 	
 	/////////////////////////////////////////////////////////////////////////
 	public static String apresentarCardapio() {
-     	 String a="";
-     	 for (ItemCardapio cardapio : r.getAllCardapio()) {
-               a+=cardapio.Show()+"\n\n";
-               
-       }
-       return a;
+		 StringBuilder a = new StringBuilder();
+	     StringBuilder b = new StringBuilder();
+	     a.append("-----------------------------------------------\nTradicional\n===================\n");
+	     b.append("-----------------------------------------------\nIndustrializado\n===================\n");
+	     for (ItemCardapio cardapio : r.getAllCardapio()) {
+	         String tipoItem = cardapio.getTipo();
+	         if (tipoItem.equalsIgnoreCase("Produto Industrializado")) {
+	         	b.append(cardapio.Show()+"\n-----------------------------------------------\n");
+	         }else if((tipoItem.equalsIgnoreCase("Comida Tradicional"))) {
+	        	a.append(cardapio.Show()+"\n-----------------------------------------------\n");
+	         }
+	     }
+	     return a.toString()+b.toString();
      }
     /////////////////////////////////////////////////////////////////////////
 	

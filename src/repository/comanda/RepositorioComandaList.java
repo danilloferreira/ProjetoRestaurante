@@ -5,7 +5,7 @@ import java.util.List;
 
 import model.comanda.Comanda;
 import pattern.IdGeneratorStrategy;
-import repository.cardapio.GeneratorCardapio;
+//import repository.cardapio.GeneratorCardapio;
 
 
 public class RepositorioComandaList implements RepositorioComanda, Serializable {
@@ -22,8 +22,13 @@ public class RepositorioComandaList implements RepositorioComanda, Serializable 
 	public void criarComanda(Comanda c) throws MesaComandaAbertaException{
 		c.setNumero(idGenerator.nextId());
 		try {
-			buscarComanda(c.getMesa());
-			throw new MesaComandaAbertaException();
+			Comanda comanda = buscarComanda(c.getMesa()); 
+			if (comanda.getStatus().equalsIgnoreCase("Pendente")){
+				throw new MesaComandaAbertaException();
+			} else {
+				throw new ComandaNaoCadastradaException();
+			}
+			
 		}catch(ComandaNaoCadastradaException ex) {
 			comandas.add(c);
 		}

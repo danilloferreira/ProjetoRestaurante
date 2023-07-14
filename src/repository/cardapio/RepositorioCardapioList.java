@@ -4,9 +4,9 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import model.comanda.Comanda;
+//import model.comanda.Comanda;
 import model.itemcardapio.ItemCardapio;
-import model.pedido.Pedido;
+//import model.pedido.Pedido;
 
 public class RepositorioCardapioList implements RepositorioCardapio, Serializable{
 	IdGeneratorStrategy idGenerator;
