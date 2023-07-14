@@ -203,7 +203,7 @@ public class App {
 	     for (ItemCardapio cardapio : r.getAllCardapio()) {
 	         String tipoItem = cardapio.getTipo();
 	         if (tipoItem.equalsIgnoreCase("Produto Industrializado")) {
-	         	b.append(cardapio+"\n-----------------------------------------------\n");
+	         	b.append(cardapio).append("\n-----------------------------------------------\n");
 	         }else if((tipoItem.equalsIgnoreCase("Comida Tradicional"))) {
 	        	a.append(cardapio+"\n-----------------------------------------------\n");
 	         }
